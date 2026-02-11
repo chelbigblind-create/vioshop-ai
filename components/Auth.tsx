@@ -27,16 +27,43 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
 
     try {
       if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({ 
+          email, 
+          password,
+          options: {
+            // Isso ajuda se você desativar a confirmação no painel
+            emailRedirectTo: window.location.origin 
+          }
+        });
+        
         if (error) throw error;
-        setMessage({ type: 'success', text: 'Cadastro realizado! Verifique seu e-mail (ou tente logar se o e-mail estiver desativado no painel).' });
+        
+        if (data.user && data.session) {
+          onSession(data.session);
+        } else {
+          setMessage({ 
+            type: 'success', 
+            text: 'Conta criada! Verifique seu e-mail para confirmar (ou tente entrar se você desativou a confirmação no painel).' 
+          });
+        }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         if (data.session) onSession(data.session);
       }
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message || 'Erro na autenticação' });
+      let errorText = error.message;
+      
+      // Tradução de erros comuns do Supabase
+      if (errorText.includes('rate limit exceeded')) {
+        errorText = 'Limite de tentativas excedido. Vá no painel do Supabase > Auth > Providers > Email e desative "Confirm Email" para testar livremente.';
+      } else if (errorText.includes('Invalid login credentials')) {
+        errorText = 'E-mail ou senha incorretos.';
+      } else if (errorText.includes('User already registered')) {
+        errorText = 'Este e-mail já está cadastrado.';
+      }
+      
+      setMessage({ type: 'error', text: errorText });
     } finally {
       setLoading(false);
     }
@@ -81,7 +108,7 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
         </div>
 
         {message && (
-          <div className={`p-4 rounded-xl text-xs font-bold border ${message.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+          <div className={`p-4 rounded-xl text-xs font-bold border leading-relaxed ${message.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
             {message.text}
           </div>
         )}
@@ -97,7 +124,10 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
 
       <div className="mt-8 text-center">
         <button 
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setMessage(null);
+          }}
           className="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-pink-500 transition-colors"
         >
           {isSignUp ? 'Já tem uma conta? Entre aqui' : 'Não tem conta? Crie uma agora'}
