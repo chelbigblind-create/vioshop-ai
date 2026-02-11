@@ -6,9 +6,11 @@ interface LandingPageProps {
   onStart: () => void;
   onNavigate: (view: View) => void;
   isLoggedIn?: boolean;
+  userEmail?: string;
+  onLogout: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLoggedIn }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLoggedIn, userEmail, onLogout }) => {
   return (
     <div className="bg-zinc-950 min-h-screen text-zinc-100 selection:bg-pink-500/30">
       {/* Navigation */}
@@ -23,14 +25,23 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLogged
           <div className="hidden md:flex items-center gap-8 text-sm font-bold text-zinc-400">
             <a href="#features" className="hover:text-white transition-colors">Recursos</a>
             <a href="#pricing" className="hover:text-white transition-colors">Preços</a>
-            <a href="#about" className="hover:text-white transition-colors">Sobre</a>
           </div>
-          <button 
-            onClick={onStart}
-            className="bg-zinc-100 text-zinc-950 px-6 py-2 rounded-full font-black text-sm hover:bg-pink-500 hover:text-white transition-all active:scale-95 uppercase tracking-tighter"
-          >
-            {isLoggedIn ? 'IR PARA O PAINEL' : 'ENTRAR NO APP'}
-          </button>
+          <div className="flex items-center gap-4">
+            {isLoggedIn && (
+              <button 
+                onClick={onLogout}
+                className="hidden md:block text-[10px] font-black text-zinc-500 hover:text-red-500 uppercase tracking-widest transition-all"
+              >
+                Sair ({userEmail?.split('@')[0]})
+              </button>
+            )}
+            <button 
+              onClick={onStart}
+              className="bg-zinc-100 text-zinc-950 px-6 py-2 rounded-full font-black text-sm hover:bg-pink-500 hover:text-white transition-all active:scale-95 uppercase tracking-tighter"
+            >
+              {isLoggedIn ? 'IR PARA O PAINEL' : 'ENTRAR NO APP'}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -48,20 +59,31 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLogged
           <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-medium">
             A primeira plataforma SaaS que automatiza 100% da criação de vídeos para o TikTok Shop. Encontre produtos, gere roteiros e renderize com IA em segundos.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+          <div className="flex flex-col items-center justify-center gap-4 pt-4">
             <button 
               onClick={onStart}
               className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-indigo-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-pink-600/20 hover:scale-105 transition-all uppercase tracking-tighter"
             >
               {isLoggedIn ? 'VOLTAR AO MEU PAINEL' : 'COMEÇAR AGORA GRÁTIS'}
             </button>
-            <button className="w-full sm:w-auto bg-zinc-900 border border-zinc-800 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-zinc-800 transition-all uppercase tracking-tighter">
-              VER DEMONSTRAÇÃO
-            </button>
+            
+            {isLoggedIn ? (
+              <button 
+                onClick={onLogout}
+                className="text-xs font-black text-zinc-500 hover:text-white uppercase tracking-[0.2em] flex items-center gap-2 transition-all mt-2"
+              >
+                <i className="fas fa-sign-out-alt"></i>
+                Logado como {userEmail}. <span className="text-pink-500 underline">Trocar de conta?</span>
+              </button>
+            ) : (
+              <button className="w-full sm:w-auto bg-zinc-900 border border-zinc-800 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-zinc-800 transition-all uppercase tracking-tighter">
+                VER DEMONSTRAÇÃO
+              </button>
+            )}
           </div>
           
           {/* Dashboard Preview */}
-          <div className="mt-20 relative p-2 bg-zinc-900 border border-zinc-800 rounded-[2rem] shadow-2xl overflow-hidden group">
+          <div className="mt-20 relative p-2 bg-zinc-900 border border-zinc-800 rounded-[2rem] shadow-2xl overflow-hidden group max-w-4xl mx-auto">
             <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent z-10"></div>
             <img 
               src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=2000&auto=format&fit=crop" 
@@ -69,16 +91,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLogged
               className="w-full rounded-[1.8rem] opacity-50 grayscale group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
             />
             <div className="absolute inset-0 z-20 flex items-center justify-center">
-               <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 text-center space-y-2">
+               <div className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 text-center space-y-2 group-hover:scale-110 transition-transform">
                   <i className="fas fa-play text-white text-4xl"></i>
-                  <p className="text-white font-bold">Preview do Dashboard</p>
+                  <p className="text-white font-bold uppercase tracking-widest text-xs">Preview do Dashboard</p>
                </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Features, Pricing, etc - Mantidos... */}
+      {/* Features Section */}
       <section id="features" className="py-24 px-6 bg-zinc-900/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -118,7 +140,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLogged
         </div>
       </section>
 
-      {/* Footer (Essential for TikTok Approval) */}
+      {/* Footer */}
       <footer className="py-20 px-6 border-t border-zinc-900">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="space-y-4">

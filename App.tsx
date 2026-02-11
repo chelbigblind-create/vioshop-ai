@@ -37,6 +37,10 @@ const App: React.FC = () => {
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         setSession(session);
+        if (!session) {
+          setCurrentView(View.LANDING);
+          setShowAuth(false);
+        }
       });
 
       return () => subscription.unsubscribe();
@@ -81,7 +85,6 @@ const App: React.FC = () => {
     if (isSaved) {
       const updated = savedProducts.filter(p => p.id !== product.id);
       setSavedProducts(updated);
-      localStorage.setItem('vioshop_saved_products', JSON.stringify(updated));
     } else {
       const updated = await StorageService.saveProduct(product);
       setSavedProducts(updated);
@@ -104,7 +107,10 @@ const App: React.FC = () => {
     const supabase = getSupabaseClient();
     if (supabase) {
       await supabase.auth.signOut();
+      localStorage.removeItem('vioshop_saved_products');
+      localStorage.removeItem('vioshop_video_history');
       setSession(null);
+      setShowAuth(false);
       setCurrentView(View.LANDING);
     }
   };
@@ -117,30 +123,41 @@ const App: React.FC = () => {
     }
   };
 
-  // 1. Visões Legais
   if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.LANDING)} />;
   if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.LANDING)} />;
 
-  // 2. Landing Page (Sempre o padrão se a view for LANDING)
   if (currentView === View.LANDING && !showAuth) {
-    return <LandingPage onStart={handleStartApp} onNavigate={setCurrentView} isLoggedIn={!!session} />;
+    return (
+      <LandingPage 
+        onStart={handleStartApp} 
+        onNavigate={setCurrentView} 
+        isLoggedIn={!!session} 
+        userEmail={session?.user?.email}
+        onLogout={handleLogout}
+      />
+    );
   }
 
-  // 3. Tela de Auth (Se clicar em Entrar e não estiver logado)
   if (showAuth && !session) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-zinc-950 to-zinc-950">
-        <button onClick={() => setShowAuth(false)} className="absolute top-10 left-10 text-zinc-500 hover:text-white flex items-center gap-2 font-bold text-xs uppercase tracking-widest">
-          <i className="fas fa-arrow-left"></i> Voltar
+        <button onClick={() => setShowAuth(false)} className="absolute top-10 left-10 text-zinc-500 hover:text-white flex items-center gap-2 font-bold text-xs uppercase tracking-widest transition-all">
+          <i className="fas fa-arrow-left"></i> Voltar para Home
         </button>
         <Auth onSession={(s) => { setSession(s); setShowAuth(false); setCurrentView(View.DASHBOARD); }} />
       </div>
     );
   }
 
-  // 4. App Principal (Requer Session)
   if (!session) {
-     return <LandingPage onStart={handleStartApp} onNavigate={setCurrentView} isLoggedIn={false} />;
+     return (
+       <LandingPage 
+         onStart={handleStartApp} 
+         onNavigate={setCurrentView} 
+         isLoggedIn={false} 
+         onLogout={handleLogout}
+       />
+     );
   }
 
   return (
