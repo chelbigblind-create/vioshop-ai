@@ -20,7 +20,7 @@ import TermsOfService from './components/TermsOfService';
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
-  const [currentView, setCurrentView] = useState<View>(View.DASHBOARD);
+  const [currentView, setCurrentView] = useState<View>(View.LANDING);
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
   const [videoHistory, setVideoHistory] = useState<VideoProject[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -52,7 +52,9 @@ const App: React.FC = () => {
       setVideoHistory(history);
     };
 
-    loadInitialData();
+    if (session) {
+      loadInitialData();
+    }
 
     const checkApiKey = async () => {
       // @ts-ignore
@@ -80,7 +82,6 @@ const App: React.FC = () => {
       const updated = savedProducts.filter(p => p.id !== product.id);
       setSavedProducts(updated);
       localStorage.setItem('vioshop_saved_products', JSON.stringify(updated));
-      // Implementação futura: remover do Supabase se houver sessão
     } else {
       const updated = await StorageService.saveProduct(product);
       setSavedProducts(updated);
@@ -104,27 +105,42 @@ const App: React.FC = () => {
     if (supabase) {
       await supabase.auth.signOut();
       setSession(null);
-      setCurrentView(View.DASHBOARD);
+      setCurrentView(View.LANDING);
     }
   };
 
-  // Visões Públicas (sem auth)
-  if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.DASHBOARD)} />;
-  if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.DASHBOARD)} />;
+  const handleStartApp = () => {
+    if (session) {
+      setCurrentView(View.DASHBOARD);
+    } else {
+      setShowAuth(true);
+    }
+  };
 
-  if (!session && !showAuth) {
-    return <LandingPage onStart={() => setShowAuth(true)} onNavigate={setCurrentView} />;
+  // 1. Visões Legais
+  if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.LANDING)} />;
+  if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.LANDING)} />;
+
+  // 2. Landing Page (Sempre o padrão se a view for LANDING)
+  if (currentView === View.LANDING && !showAuth) {
+    return <LandingPage onStart={handleStartApp} onNavigate={setCurrentView} isLoggedIn={!!session} />;
   }
 
-  if (!session && showAuth) {
+  // 3. Tela de Auth (Se clicar em Entrar e não estiver logado)
+  if (showAuth && !session) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-zinc-950 to-zinc-950">
         <button onClick={() => setShowAuth(false)} className="absolute top-10 left-10 text-zinc-500 hover:text-white flex items-center gap-2 font-bold text-xs uppercase tracking-widest">
           <i className="fas fa-arrow-left"></i> Voltar
         </button>
-        <Auth onSession={(s) => { setSession(s); setShowAuth(false); }} />
+        <Auth onSession={(s) => { setSession(s); setShowAuth(false); setCurrentView(View.DASHBOARD); }} />
       </div>
     );
+  }
+
+  // 4. App Principal (Requer Session)
+  if (!session) {
+     return <LandingPage onStart={handleStartApp} onNavigate={setCurrentView} isLoggedIn={false} />;
   }
 
   return (

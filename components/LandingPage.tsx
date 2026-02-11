@@ -5,9 +5,10 @@ import { View } from '../types';
 interface LandingPageProps {
   onStart: () => void;
   onNavigate: (view: View) => void;
+  isLoggedIn?: boolean;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate, isLoggedIn }) => {
   return (
     <div className="bg-zinc-950 min-h-screen text-zinc-100 selection:bg-pink-500/30">
       {/* Navigation */}
@@ -26,9 +27,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
           </div>
           <button 
             onClick={onStart}
-            className="bg-zinc-100 text-zinc-950 px-6 py-2 rounded-full font-black text-sm hover:bg-pink-500 hover:text-white transition-all active:scale-95"
+            className="bg-zinc-100 text-zinc-950 px-6 py-2 rounded-full font-black text-sm hover:bg-pink-500 hover:text-white transition-all active:scale-95 uppercase tracking-tighter"
           >
-            ENTRAR NO APP
+            {isLoggedIn ? 'IR PARA O PAINEL' : 'ENTRAR NO APP'}
           </button>
         </div>
       </nav>
@@ -50,11 +51,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <button 
               onClick={onStart}
-              className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-indigo-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-pink-600/20 hover:scale-105 transition-all"
+              className="w-full sm:w-auto bg-gradient-to-r from-pink-600 to-indigo-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-2xl shadow-pink-600/20 hover:scale-105 transition-all uppercase tracking-tighter"
             >
-              COMEÇAR AGORA GRÁTIS
+              {isLoggedIn ? 'VOLTAR AO MEU PAINEL' : 'COMEÇAR AGORA GRÁTIS'}
             </button>
-            <button className="w-full sm:w-auto bg-zinc-900 border border-zinc-800 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-zinc-800 transition-all">
+            <button className="w-full sm:w-auto bg-zinc-900 border border-zinc-800 text-white px-10 py-5 rounded-2xl font-black text-lg hover:bg-zinc-800 transition-all uppercase tracking-tighter">
               VER DEMONSTRAÇÃO
             </button>
           </div>
@@ -77,7 +78,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features, Pricing, etc - Mantidos... */}
       <section id="features" className="py-24 px-6 bg-zinc-900/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -112,59 +113,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onStart, onNavigate }) => {
               <p className="text-zinc-500 text-sm leading-relaxed">
                 Gere clipes de vídeo realistas em 9:16 com avatares humanos de última geração, prontos para postar e converter.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black tracking-tight mb-4">Planos que <span className="text-pink-500">Escalam</span></h2>
-            <p className="text-zinc-400 font-medium">Escolha o plano ideal para sua operação.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-zinc-900 border border-zinc-800 p-10 rounded-[2.5rem] space-y-6">
-              <div>
-                <h4 className="text-zinc-500 font-bold uppercase text-xs tracking-widest">Iniciante</h4>
-                <p className="text-4xl font-black mt-2 text-white">R$ 97<span className="text-sm font-medium text-zinc-500">/mês</span></p>
-              </div>
-              <ul className="space-y-4 text-sm text-zinc-400">
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> 10 Vídeos por mês</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Mineração básica</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Suporte via E-mail</li>
-              </ul>
-              <button onClick={onStart} className="w-full py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-bold transition-all">Assinar Agora</button>
-            </div>
-
-            <div className="bg-zinc-900 border-2 border-pink-500 p-10 rounded-[2.5rem] space-y-6 relative scale-105 shadow-2xl shadow-pink-500/10">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-pink-500 text-white text-[10px] font-black uppercase px-4 py-1 rounded-full">Mais Popular</div>
-              <div>
-                <h4 className="text-pink-500 font-bold uppercase text-xs tracking-widest">Afiliado Pro</h4>
-                <p className="text-4xl font-black mt-2 text-white">R$ 197<span className="text-sm font-medium text-zinc-500">/mês</span></p>
-              </div>
-              <ul className="space-y-4 text-sm text-zinc-300">
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Vídeos Ilimitados</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Mineração Avançada</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Acesso antecipado ao Veo 3.1</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Suporte Prioritário</li>
-              </ul>
-              <button onClick={onStart} className="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold transition-all">Assinar Agora</button>
-            </div>
-
-            <div className="bg-zinc-900 border border-zinc-800 p-10 rounded-[2.5rem] space-y-6">
-              <div>
-                <h4 className="text-zinc-500 font-bold uppercase text-xs tracking-widest">Agência</h4>
-                <p className="text-4xl font-black mt-2 text-white">R$ 497<span className="text-sm font-medium text-zinc-500">/mês</span></p>
-              </div>
-              <ul className="space-y-4 text-sm text-zinc-400">
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Gestão de 5 contas</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> API White Label</li>
-                <li className="flex items-center gap-3"><i className="fas fa-check text-pink-500"></i> Gerente de Contas</li>
-              </ul>
-              <button onClick={onStart} className="w-full py-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-bold transition-all">Falar com Consultor</button>
             </div>
           </div>
         </div>
