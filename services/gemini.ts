@@ -3,6 +3,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { Product } from "../types";
 
 export const generateScript = async (product: Product, targetAudience: string = "Criadores do TikTok"): Promise<string> => {
+  // Sempre instanciar novo para pegar a chave do processo atual
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -20,6 +21,7 @@ export const generateScript = async (product: Product, targetAudience: string = 
 };
 
 export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' | '16:9' = '9:16') => {
+  // Re-instanciar para garantir o uso da chave selecionada no diálogo se houver
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   let operation = await ai.models.generateVideos({
@@ -33,12 +35,16 @@ export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' |
   });
 
   while (!operation.done) {
-    await new Promise(resolve => setTimeout(resolve, 5000));
+    await new Promise(resolve => setTimeout(resolve, 10000));
     operation = await ai.operations.getVideosOperation({operation: operation});
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+  // Adiciona a API_KEY na URL de download conforme exigido para o Veo
   const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
+  if (!videoResponse.ok) {
+    throw new Error(`Erro ao baixar vídeo: ${videoResponse.statusText}`);
+  }
   const blob = await videoResponse.blob();
   return URL.createObjectURL(blob);
 };

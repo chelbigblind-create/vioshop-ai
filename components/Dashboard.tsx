@@ -38,148 +38,104 @@ const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const copyDescricaoNegocioDev = () => {
-    const text = "A VioShop AI é uma plataforma SaaS (Software as a Service) desenvolvida para potencializar o desempenho de afiliados e criadores de conteúdo dentro do ecossistema TikTok Shop. Nossa competência principal reside na integração de Inteligência Artificial Generativa para automatizar a produção de vídeos de alta conversão. Nosso objetivo como parceiros tecnológicos é fornecer ferramentas que facilitem a descoberta de produtos e a criação de roteiros criativos, permitindo que afiliados escalem suas operações de marketing de forma profissional e eficiente.";
+    const text = "A VioShop AI é uma plataforma SaaS (Software as a Service) desenvolvida para potencializar o desempenho de afiliados e criadores de conteúdo dentro do ecossistema TikTok Shop. Nossa competência principal reside na integração de Inteligência Artificial Generativa para automatizar a produção de vídeos de alta conversão.";
     handleCopy(text, "Descrição do SaaS copiada!");
   };
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Banner de Ajuda para Configuração TikTok Partner Center */}
-      {!isTikTokConnected && (
-        <div className="bg-zinc-900 border border-indigo-500/30 p-6 rounded-[2rem] shadow-2xl shadow-indigo-500/5 relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4">
-            <button 
-              onClick={() => setShowHelp(!showHelp)}
-              className="text-indigo-400 hover:text-white transition-colors flex items-center gap-2 bg-indigo-500/10 px-3 py-1.5 rounded-full"
-            >
-              <i className={`fas ${showHelp ? 'fa-times' : 'fa-list-check'} text-sm`}></i>
-              <span className="text-[10px] font-bold uppercase tracking-widest">{showHelp ? 'Fechar Guia' : 'Checklist de Aprovação'}</span>
-            </button>
+      {/* Banner de Status de API */}
+      <div className={`p-6 rounded-[2rem] border transition-all flex flex-col md:flex-row items-center justify-between gap-6 ${
+        hasApiKey 
+          ? 'bg-emerald-500/5 border-emerald-500/20' 
+          : 'bg-zinc-900 border-zinc-800 shadow-2xl shadow-indigo-500/5'
+      }`}>
+        <div className="flex items-center gap-5">
+          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl shadow-lg transition-all ${
+            hasApiKey ? 'bg-emerald-500 text-white shadow-emerald-500/20' : 'bg-indigo-600 text-white shadow-indigo-600/20'
+          }`}>
+            <i className={`fas ${hasApiKey ? 'fa-check-double' : 'fa-key'}`}></i>
           </div>
-
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pr-8">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-indigo-400">
-                <i className="fas fa-shield-halved text-sm"></i>
-                <span className="text-[10px] font-black uppercase tracking-widest">TikTok Shop Partner Center</span>
-              </div>
-              <h3 className="text-xl font-bold">Registro de Desenvolvedor SaaS</h3>
-              <p className="text-sm text-zinc-400 max-w-md">
-                Para aprovação rápida do App, certifique-se de que sua Landing Page está pronta:
-              </p>
-            </div>
-            <div className="w-full md:w-auto flex flex-col gap-2">
-               <div className="flex items-center gap-2 bg-zinc-950 p-2 rounded-2xl border border-zinc-800">
-                <code className="px-4 py-2 text-xs font-mono text-zinc-300 break-all">{currentOrigin}</code>
-                <button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(currentOrigin);
-                    setCopied(true);
-                    setTimeout(() => setCopied(false), 2000);
-                  }}
-                  className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                    copied ? 'bg-emerald-500 text-white' : 'bg-zinc-800 hover:bg-zinc-700 text-zinc-300'
-                  }`}
-                >
-                  {copied ? 'Copiado!' : 'Copiar URL'}
-                </button>
-              </div>
-              <p className="text-[10px] text-zinc-500 text-center italic">Use este link se já estiver em um subdomínio (ex: .vercel.app)</p>
-            </div>
+          <div>
+            <h3 className="text-xl font-bold flex items-center gap-2">
+              {hasApiKey ? 'API Nível Pago Ativada' : 'Configuração de API'}
+              {hasApiKey && <span className="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full uppercase tracking-widest font-black">Pro</span>}
+            </h3>
+            <p className="text-sm text-zinc-400 max-w-md mt-1">
+              {hasApiKey 
+                ? 'Sua conta "apps criados" está pronta para gerar vídeos de alta definição com Veo 3.1.' 
+                : 'Conecte sua chave do Google AI Studio para desbloquear o motor de vídeo IA.'}
+            </p>
           </div>
-
-          {showHelp && (
-            <div className="mt-6 pt-6 border-t border-zinc-800 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-2">
-              <div className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400">1. Dados da Empresa</h4>
-                <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800 space-y-3">
-                  <button 
-                    onClick={copyObjetoSocialDev}
-                    className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold rounded-lg transition-all"
-                  >
-                    Copiar Objeto Social (TI)
-                  </button>
-                  <button 
-                    onClick={copyDescricaoNegocioDev}
-                    className="w-full py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold rounded-lg transition-all"
-                  >
-                    Copiar Descrição SaaS
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400">2. Checklist do Site</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-                    <i className="fas fa-check text-emerald-500"></i>
-                    <span>Subdomínio Profissional (Vercel/Netlify)</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-400">
-                    <i className="fas fa-check text-emerald-500"></i>
-                    <span>Explicar que é uma ferramenta para Afiliados</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-300 font-bold">
-                    <i className="fas fa-circle-exclamation text-yellow-500"></i>
-                    <span>Links de Privacidade e Termos de Uso</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <h4 className="text-xs font-black uppercase tracking-widest text-indigo-400">Dica de Domínio</h4>
-                <div className="bg-indigo-500/5 p-4 rounded-xl border border-indigo-500/20">
-                  <p className="text-[11px] text-zinc-400 leading-relaxed">
-                    <strong>Pode usar domínio gratuito?</strong> Sim! Se você criar no <u>Vercel</u> ou <u>Netlify</u>, o TikTok aprova. Evite apenas domínios de "encurtadores" ou links que expiram.
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
-      )}
+        
+        <div className="flex gap-3">
+          {!hasApiKey ? (
+            <button 
+              onClick={onActivateKey}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3.5 rounded-2xl font-black text-sm transition-all shadow-xl shadow-indigo-600/20 active:scale-95"
+            >
+              ATIVAR CHAVE AGORA
+            </button>
+          ) : (
+            <button 
+              onClick={onActivateKey}
+              className="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-6 py-3.5 rounded-2xl font-bold text-sm transition-all border border-zinc-700 active:scale-95"
+            >
+              Mudar Chave
+            </button>
+          )}
+          <button 
+            onClick={() => setShowHelp(!showHelp)}
+            className="w-12 h-12 bg-zinc-900 border border-zinc-800 text-zinc-500 rounded-2xl flex items-center justify-center hover:text-white transition-all"
+          >
+            <i className={`fas ${showHelp ? 'fa-times' : 'fa-question'}`}></i>
+          </button>
+        </div>
+      </div>
 
-      {!hasApiKey && (
-        <div className="bg-gradient-to-r from-pink-500/10 to-indigo-500/10 border border-pink-500/20 p-4 rounded-2xl flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-pink-500/20 text-pink-500 rounded-full flex items-center justify-center">
-              <i className="fas fa-info-circle"></i>
-            </div>
-            <div>
-              <p className="text-sm font-bold">Motor de Vídeo Veo 3.1 Desativado</p>
-              <p className="text-xs text-zinc-400">Ative para começar a gerar clipes de vendas com IA.</p>
+      {showHelp && (
+        <div className="bg-zinc-900/50 border border-zinc-800 p-8 rounded-[2.5rem] animate-in zoom-in-95 duration-300 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h4 className="text-sm font-black uppercase tracking-widest text-indigo-400">Guia de Aprovação TikTok Shop</h4>
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Use estes dados ao registrar seu App no TikTok Shop Partner Center para garantir uma aprovação rápida.
+            </p>
+            <div className="space-y-2">
+              <button onClick={copyObjetoSocialDev} className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                <i className="fas fa-copy"></i> Copiar Objeto Social (TI)
+              </button>
+              <button onClick={copyDescricaoNegocioDev} className="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold rounded-xl transition-all flex items-center justify-center gap-2">
+                <i className="fas fa-copy"></i> Copiar Descrição SaaS
+              </button>
             </div>
           </div>
-          <button 
-            onClick={onActivateKey}
-            className="text-[10px] font-black uppercase tracking-widest bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-all"
-          >
-            Configurar Agora
-          </button>
+          <div className="space-y-4">
+            <h4 className="text-sm font-black uppercase tracking-widest text-pink-400">Dica Billing Google</h4>
+            <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+              <p className="text-xs text-zinc-400 leading-relaxed italic">
+                "O modelo Veo 3.1 pode levar alguns minutos para ser habilitado no console após a ativação do faturamento. Se receber erro 404, aguarde 15 minutos."
+              </p>
+              <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" className="inline-block mt-4 text-[10px] text-pink-500 font-bold hover:underline">
+                DOCS FATURAMENTO <i className="fas fa-external-link-alt ml-1"></i>
+              </a>
+            </div>
+          </div>
         </div>
       )}
 
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-4xl font-black tracking-tight text-white">Painel de Controle</h2>
-          <p className="text-zinc-400 mt-2 font-medium">Crie vídeos virais que convertem em vendas reais.</p>
+          <h2 className="text-4xl font-black tracking-tight text-white">Seu Império TikTok</h2>
+          <p className="text-zinc-400 mt-2 font-medium">Estatísticas em tempo real da sua operação de Social Commerce.</p>
         </div>
         <div className="flex gap-3">
-          {!isTikTokConnected && (
-            <button 
-              onClick={onConnect}
-              className="bg-zinc-800 hover:bg-zinc-700 text-white px-6 py-3.5 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all border border-zinc-700 active:scale-95"
-            >
-              <i className="fab fa-tiktok"></i>
-              Conectar TikTok Shop
-            </button>
-          )}
           <button 
             onClick={onNewVideo}
-            className="bg-gradient-to-r from-pink-600 to-indigo-600 hover:opacity-90 text-white px-8 py-3.5 rounded-2xl font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-pink-600/20 active:scale-95"
+            className="bg-gradient-to-r from-pink-600 to-indigo-600 hover:opacity-90 text-white px-8 py-4 rounded-2xl font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-pink-600/20 active:scale-95"
           >
-            <i className="fas fa-plus"></i>
-            GERAR VÍDEO
+            <i className="fas fa-wand-magic-sparkles"></i>
+            NOVO VÍDEO VIRAL
           </button>
         </div>
       </header>
@@ -210,10 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({
 
       <section className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-black tracking-tight text-white">Projetos Recentes</h3>
-          {history.length > 0 && (
-            <button className="text-pink-500 text-sm font-bold hover:underline">Ver todos</button>
-          )}
+          <h3 className="text-2xl font-black tracking-tight text-white">Clippings Recentes</h3>
         </div>
         
         {history.length > 0 ? (
@@ -229,13 +182,10 @@ const Dashboard: React.FC<DashboardProps> = ({
                       <span className="text-[10px] font-bold uppercase tracking-widest">Renderizando...</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <i className="fas fa-play text-white text-3xl"></i>
-                  </div>
                 </div>
                 <div className="p-5">
                   <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">{new Date(project.createdAt).toLocaleDateString()}</p>
-                  <p className="text-sm font-bold truncate mt-2 text-white">Clip de Vendas AI #{project.id.slice(0, 4)}</p>
+                  <p className="text-sm font-bold truncate mt-2 text-white">VioShop Clip #{project.id.slice(0, 4)}</p>
                 </div>
               </div>
             ))}
@@ -246,10 +196,10 @@ const Dashboard: React.FC<DashboardProps> = ({
               <i className="fas fa-video-slash text-2xl text-zinc-600"></i>
             </div>
             <h4 className="text-lg font-bold text-zinc-300">Nenhum vídeo no estúdio</h4>
-            <p className="text-sm mt-2 max-w-xs text-center px-6">Comece explorando produtos no TikTok Shop para gerar seu primeiro roteiro e vídeo com IA.</p>
+            <p className="text-sm mt-2 max-w-xs text-center px-6">Escolha um produto e deixe nossa IA criar o vídeo perfeito para você vender mais.</p>
             <button 
               onClick={onNewVideo} 
-              className="mt-8 px-6 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-sm font-bold transition-all active:scale-95"
+              className="mt-8 px-8 py-3 bg-pink-600 hover:bg-pink-700 text-white rounded-xl font-bold transition-all active:scale-95 shadow-xl shadow-pink-600/20"
             >
               Começar Agora
             </button>
