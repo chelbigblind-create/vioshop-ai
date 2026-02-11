@@ -19,6 +19,7 @@ import TermsOfService from './components/TermsOfService';
 
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [showAuth, setShowAuth] = useState(false);
   const [currentView, setCurrentView] = useState<View>(View.LANDING);
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
@@ -31,10 +32,15 @@ const App: React.FC = () => {
   useEffect(() => {
     const supabase = getSupabaseClient();
     if (supabase) {
+      // 1. Verificar sessão inicial
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
+        setIsInitializing(false);
+      }).catch(() => {
+        setIsInitializing(false);
       });
 
+      // 2. Escutar mudanças (Login/Logout)
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         setSession(session);
         if (!session) {
@@ -44,6 +50,8 @@ const App: React.FC = () => {
       });
 
       return () => subscription.unsubscribe();
+    } else {
+      setIsInitializing(false);
     }
   }, []);
 
@@ -123,9 +131,22 @@ const App: React.FC = () => {
     }
   };
 
+  // TELA DE CARREGAMENTO INICIAL (Prova de atualização)
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-2xl flex items-center justify-center animate-bounce shadow-2xl shadow-pink-500/20">
+          <i className="fas fa-bolt text-white text-2xl"></i>
+        </div>
+        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] animate-pulse">Iniciando VioShop AI...</p>
+      </div>
+    );
+  }
+
   if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.LANDING)} />;
   if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.LANDING)} />;
 
+  // Se estiver na Landing Page e NÃO clicou em Entrar
   if (currentView === View.LANDING && !showAuth) {
     return (
       <LandingPage 
@@ -138,28 +159,31 @@ const App: React.FC = () => {
     );
   }
 
+  // Se clicou em Entrar mas NÃO está logado
   if (showAuth && !session) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-zinc-950 to-zinc-950">
         <button onClick={() => setShowAuth(false)} className="absolute top-10 left-10 text-zinc-500 hover:text-white flex items-center gap-2 font-bold text-xs uppercase tracking-widest transition-all">
-          <i className="fas fa-arrow-left"></i> Voltar para Home
+          <i className="fas fa-arrow-left"></i> Voltar
         </button>
         <Auth onSession={(s) => { setSession(s); setShowAuth(false); setCurrentView(View.DASHBOARD); }} />
       </div>
     );
   }
 
+  // PROTEÇÃO FINAL: Se por qualquer motivo não houver sessão, volta pra Landing
   if (!session) {
-     return (
-       <LandingPage 
-         onStart={handleStartApp} 
-         onNavigate={setCurrentView} 
-         isLoggedIn={false} 
-         onLogout={handleLogout}
-       />
-     );
+    return (
+      <LandingPage 
+        onStart={handleStartApp} 
+        onNavigate={setCurrentView} 
+        isLoggedIn={false} 
+        onLogout={handleLogout}
+      />
+    );
   }
 
+  // APP LOGADO
   return (
     <div className="flex min-h-screen bg-zinc-950 text-zinc-100 selection:bg-pink-500/30">
       <Sidebar 
@@ -181,15 +205,11 @@ const App: React.FC = () => {
               history={videoHistory}
               hasApiKey={hasApiKey}
               onActivateKey={handleOpenKeyDialog}
-              isCloudSync={!!session}
+              isCloudSync={true}
             />
           )}
           {currentView === View.PRODUCT_DISCOVERY && (
-            <ProductDiscovery 
-              onSave={toggleSaveProduct} 
-              savedProducts={savedProducts} 
-              onSelect={startWizard}
-            />
+            <ProductDiscovery onSave={toggleSaveProduct} savedProducts={savedProducts} onSelect={startWizard} />
           )}
           {currentView === View.SAVED_PRODUCTS && (
             <SavedProducts products={savedProducts} onRemove={toggleSaveProduct} onSelect={startWizard} />
