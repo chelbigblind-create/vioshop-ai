@@ -1,0 +1,8 @@
+{
+  "name": "VioShop AI - TikTok Shop Video SaaS",
+  "description": "Plataforma SaaS de geração automática de vídeos com IA para afiliados do TikTok Shop. Encontre produtos, crie roteiros e gere vídeos profissionais com Veo 3.1.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
