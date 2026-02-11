@@ -7,9 +7,17 @@ export enum View {
   EDITOR = 'EDITOR',
   HISTORY = 'HISTORY',
   BRANDING = 'BRANDING',
+  SETTINGS = 'SETTINGS', // Nova view para configurar API real
   PRIVACY_POLICY = 'PRIVACY_POLICY',
   TERMS_OF_SERVICE = 'TERMS_OF_SERVICE',
   LANDING = 'LANDING'
+}
+
+export interface ApiConfig {
+  appKey: string;
+  appSecret: string;
+  region: string;
+  shopId?: string;
 }
 
 export interface Product {
@@ -17,6 +25,7 @@ export interface Product {
   name: string;
   image: string;
   price: number;
+  commissionRate: number;
   category: string;
   link: string;
   stats: {

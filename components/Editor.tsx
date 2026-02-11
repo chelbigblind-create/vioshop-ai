@@ -29,14 +29,13 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
       const errorMessage = e.message || "";
       if (errorMessage.includes("Requested entity was not found") || errorMessage.includes("404")) {
         setError("O modelo Veo 3.1 ainda não está ativo no seu projeto 'apps criados' ou a chave não é Nível Pago 1.");
-        // Conforme diretriz: resetar e pedir chave novamente em caso de 404/Not Found
+        // Correcting error handling for 404/Not Found: Trigger key selection and proceed without artificial delay
         // @ts-ignore
         if (window.aistudio && window.aistudio.openSelectKey) {
-          setTimeout(async () => {
-             // @ts-ignore
-             await window.aistudio.openSelectKey();
-             generate();
-          }, 3000);
+           // @ts-ignore
+           await window.aistudio.openSelectKey();
+           // Proceed immediately to retry generation assuming selection was successful
+           generate();
         }
       } else if (errorMessage.includes("quota") || errorMessage.includes("429")) {
         setError("Limite de cota atingido. Aguarde um minuto e tente novamente.");

@@ -2,8 +2,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { Product } from "../types";
 
+export const generateBusinessDescription = async (language: 'pt' | 'en'): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+  const prompt = language === 'en' 
+    ? "Write a professional business description (max 300 chars) for a TikTok Shop Affiliate Partner agency that uses AI to create high-converting product videos. Focus on scalability, technology, and performance."
+    : "Escreva uma descrição profissional (máx 300 caracteres) para uma agência parceira de afiliados do TikTok Shop que usa IA para criar vídeos de alta conversão. Foque em escala, tecnologia e performance.";
+  
+  const response = await ai.models.generateContent({
+    model: 'gemini-3-flash-preview',
+    contents: prompt,
+  });
+  return response.text?.trim() || "";
+};
+
 export const generateScript = async (product: Product, targetAudience: string = "Criadores do TikTok"): Promise<string> => {
-  // Sempre instanciar novo para pegar a chave do processo atual
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
@@ -21,7 +33,6 @@ export const generateScript = async (product: Product, targetAudience: string = 
 };
 
 export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' | '16:9' = '9:16') => {
-  // Re-instanciar para garantir o uso da chave selecionada no diálogo se houver
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   
   let operation = await ai.models.generateVideos({
@@ -40,7 +51,6 @@ export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' |
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
-  // Adiciona a API_KEY na URL de download conforme exigido para o Veo
   const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
   if (!videoResponse.ok) {
     throw new Error(`Erro ao baixar vídeo: ${videoResponse.statusText}`);

@@ -4,47 +4,51 @@ import { Product, Avatar, Voice, Scene } from './types';
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: 'p1',
-    name: 'Liquidificador Portátil USB',
-    image: 'https://picsum.photos/seed/blender/400/400',
+    name: 'Liquidificador Portátil USB Turbo',
+    image: 'https://images.unsplash.com/photo-1570222094114-d054a817e56b?q=80&w=400&h=400&auto=format&fit=crop',
     price: 89.90,
+    commissionRate: 20,
     category: 'Cozinha',
-    link: 'https://tiktok.com/shop/example1',
+    link: '#',
     stats: { sales: 1200, conversion: 12.5, trending: true }
   },
   {
     id: 'p2',
-    name: 'Fone de Ouvido Noise Cancelling',
-    image: 'https://picsum.photos/seed/headphone/400/400',
+    name: 'Fone Noise Cancelling Pro',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&h=400&auto=format&fit=crop',
     price: 249.00,
+    commissionRate: 15,
     category: 'Eletrônicos',
-    link: 'https://tiktok.com/shop/example2',
+    link: '#',
     stats: { sales: 850, conversion: 8.2, trending: false }
   },
   {
     id: 'p3',
-    name: 'Kit de Maquiagem Profissional',
-    image: 'https://picsum.photos/seed/makeup/400/400',
+    name: 'Kit Maquiagem Matte Finish',
+    image: 'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?q=80&w=400&h=400&auto=format&fit=crop',
     price: 159.00,
+    commissionRate: 30,
     category: 'Beleza',
-    link: 'https://tiktok.com/shop/example3',
+    link: '#',
     stats: { sales: 2300, conversion: 15.4, trending: true }
   },
   {
     id: 'p4',
-    name: 'Luminária Projetor Galáxia',
-    image: 'https://picsum.photos/seed/galaxy/400/400',
+    name: 'Luminária Projetor Galaxy 360',
+    image: 'https://images.unsplash.com/photo-1534073828943-f801091bb18c?q=80&w=400&h=400&auto=format&fit=crop',
     price: 119.00,
+    commissionRate: 25,
     category: 'Decoração',
-    link: 'https://tiktok.com/shop/example4',
+    link: '#',
     stats: { sales: 4500, conversion: 22.1, trending: true }
   },
 ];
 
 export const AVATARES: Avatar[] = [
-  { id: 'a1', name: 'Lucas', style: 'Casual Moderno', previewUrl: 'https://picsum.photos/seed/lucas/200/300' },
-  { id: 'a2', name: 'Sofia', style: 'Executiva Profissional', previewUrl: 'https://picsum.photos/seed/sofia/200/300' },
-  { id: 'a3', name: 'Mundo AI', style: 'Futurista / Cyber', previewUrl: 'https://picsum.photos/seed/cyber/200/300' },
-  { id: 'a4', name: 'Juliana', style: 'Lifestyle Blogger', previewUrl: 'https://picsum.photos/seed/juliana/200/300' },
+  { id: 'a1', name: 'Lucas', style: 'Casual Moderno', previewUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=300&h=400&auto=format&fit=crop' },
+  { id: 'a2', name: 'Sofia', style: 'Executiva Pro', previewUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=300&h=400&auto=format&fit=crop' },
+  { id: 'a3', name: 'Mundo AI', style: 'Futurista', previewUrl: 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=300&h=400&auto=format&fit=crop' },
+  { id: 'a4', name: 'Juliana', style: 'Blogger', previewUrl: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=300&h=400&auto=format&fit=crop' },
 ];
 
 export const VOICES: Voice[] = [
@@ -55,8 +59,8 @@ export const VOICES: Voice[] = [
 ];
 
 export const SCENES: Scene[] = [
-  { id: 's1', name: 'Quarto Moderno', previewUrl: 'https://picsum.photos/seed/room/300/500' },
-  { id: 's2', name: 'Escritório Home Office', previewUrl: 'https://picsum.photos/seed/office/300/500' },
-  { id: 's3', name: 'Estúdio Profissional', previewUrl: 'https://picsum.photos/seed/studio/300/500' },
-  { id: 's4', name: 'Fundo Comercial', previewUrl: 'https://picsum.photos/seed/commercial/300/500' },
+  { id: 's1', name: 'Quarto Moderno', previewUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=300&h=500&auto=format&fit=crop' },
+  { id: 's2', name: 'Home Office', previewUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?q=80&w=300&h=500&auto=format&fit=crop' },
+  { id: 's3', name: 'Estúdio Pro', previewUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=300&h=500&auto=format&fit=crop' },
+  { id: 's4', name: 'Fundo Comercial', previewUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=300&h=500&auto=format&fit=crop' },
 ];
