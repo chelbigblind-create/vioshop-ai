@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -11,7 +12,8 @@ declare global {
   }
 
   interface Window {
-    aistudio: AIStudio;
+    // Adicionado o modificador 'readonly' para coincidir com a declaração do ambiente e evitar erro de modificadores.
+    readonly aistudio: AIStudio;
   }
 }
 
