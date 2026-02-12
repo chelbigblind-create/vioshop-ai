@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ApiConfig } from '../types';
+import { resetSupabaseInstance } from '../services/supabase';
 
 const Settings: React.FC = () => {
   const [config, setConfig] = useState<ApiConfig>({
@@ -34,6 +35,7 @@ const Settings: React.FC = () => {
 
   const handleSaveDb = () => {
     localStorage.setItem('vioshop_supabase_config', JSON.stringify(dbConfig));
+    resetSupabaseInstance(); // Limpa a instância antiga antes de recarregar
     setIsDbSaved(true);
     setTimeout(() => setIsDbSaved(false), 3000);
     // Pequeno delay para garantir o salvamento antes do reload

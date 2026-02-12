@@ -1,5 +1,8 @@
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+
+// Variável privada para armazenar a instância única do cliente
+let supabaseInstance: SupabaseClient | null = null;
 
 const getSupabaseConfig = () => {
   const saved = localStorage.getItem('vioshop_supabase_config');
@@ -22,7 +25,16 @@ const getSupabaseConfig = () => {
   };
 };
 
-export const getSupabaseClient = () => {
+/**
+ * Retorna uma instância única do cliente Supabase (Singleton).
+ * Isso evita o erro de "Multiple GoTrueClient instances" visto no console.
+ */
+export const getSupabaseClient = (): SupabaseClient | null => {
+  // Se já existir uma instância, retornamos ela imediatamente
+  if (supabaseInstance) {
+    return supabaseInstance;
+  }
+
   const config = getSupabaseConfig();
   
   if (!config.url || !config.url.startsWith('http')) {
@@ -30,7 +42,8 @@ export const getSupabaseClient = () => {
   }
   
   try {
-    return createClient(config.url, config.anonKey, {
+    // Criamos a instância apenas se ela ainda não existir
+    supabaseInstance = createClient(config.url, config.anonKey, {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
@@ -39,8 +52,16 @@ export const getSupabaseClient = () => {
         storage: window.localStorage
       }
     });
+    return supabaseInstance;
   } catch (e) {
     console.error("Falha ao inicializar Supabase:", e);
     return null;
   }
+};
+
+/**
+ * Função utilitária para resetar a instância (usada quando o usuário troca as chaves nas configurações)
+ */
+export const resetSupabaseInstance = () => {
+  supabaseInstance = null;
 };

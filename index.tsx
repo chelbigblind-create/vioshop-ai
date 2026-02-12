@@ -12,8 +12,8 @@ declare global {
   }
 
   interface Window {
-    // Added 'readonly' modifier to match ambient environment declarations as required by TypeScript.
-    readonly aistudio: AIStudio;
+    // Fixed: Removed 'readonly' modifier to ensure property declarations match ambient environment definitions.
+    aistudio: AIStudio;
   }
 }
 
