@@ -3,10 +3,15 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 // Declaração para o TypeScript reconhecer as funções do ambiente do AI Studio.
-// O tipo AIStudio e a propriedade window.aistudio já são fornecidos pelo ambiente.
+// O ambiente já define o tipo 'AIStudio', então estendemos e associamos corretamente para evitar conflitos de modificadores.
 declare global {
+  interface AIStudio {
+    hasSelectedApiKey: () => Promise<boolean>;
+    openSelectKey: () => Promise<void>;
+  }
+
   interface Window {
-    readonly aistudio: AIStudio;
+    aistudio: AIStudio;
   }
 }
 
