@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { GoogleGenAI } from "@google/genai";
 
@@ -13,7 +12,8 @@ const Branding: React.FC = () => {
     setIsGenerating(true);
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+      // Sempre use new GoogleGenAI({ apiKey: process.env.API_KEY }) conforme diretrizes
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = "A high-quality, professional, modern logo for a SaaS platform called 'VioShop AI'. The logo should feature a stylized lightning bolt combined with a video play button symbol. Minimalist design, vibrant gradient colors of pink and deep indigo, futuristic tech aesthetic. White background, high resolution, centered, app icon style.";
       
       const response = await ai.models.generateContent({
@@ -38,7 +38,8 @@ const Branding: React.FC = () => {
     setIsThumbGenerating(true);
     setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+      // Sempre use new GoogleGenAI({ apiKey: process.env.API_KEY }) conforme diretrizes
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const prompt = "A vibrant, eye-catching TikTok video thumbnail cover. High contrast, featuring a futuristic 3D product with floating text elements like 'TOP 1'. Pink and purple neon lighting, professional studio product photography style, vertical 9:16 aspect ratio.";
       
       const response = await ai.models.generateContent({

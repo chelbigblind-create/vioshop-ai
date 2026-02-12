@@ -35,7 +35,6 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
     }, 15000);
 
     try {
-      // Prompt otimizado para qualidade comercial
       const prompt = `Vertical 9:16 high-end commercial video for TikTok Shop. A professional AI influencer showing ${project.script.substring(0, 100)}. Cinematic lighting, professional studio background, hyper-realistic details, 8k resolution style, smooth camera movements. The character looks directly into the lens with high engagement.`;
       
       const url = await generateVideoWithVeo(prompt, '9:16');
@@ -46,10 +45,9 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
       
       if (errorMessage.includes("Requested entity was not found") || errorMessage.includes("404")) {
         setError("PROJETO NÃO CONFIGURADO: O modelo Veo 3.1 exige uma chave de API de um projeto Google Cloud com faturamento ativo.");
-        // @ts-ignore
-        if (window.aistudio && window.aistudio.openSelectKey) {
+        if (window.aistudio && typeof window.aistudio.openSelectKey === 'function') {
            await window.aistudio.openSelectKey();
-           generate(); // Tentar novamente após seleção
+           generate(); 
         }
       } else {
         setError("ERRO NA RENDERIZAÇÃO: Verifique sua cota de IA e conexão.");
@@ -66,7 +64,6 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
 
   return (
     <div className="flex flex-col lg:flex-row h-[calc(100vh-140px)] gap-8 animate-in zoom-in duration-700">
-      {/* Coluna de Preview (Aesthetic Mobile Style) */}
       <div className="lg:w-[450px] flex flex-col bg-zinc-900 border border-zinc-800 rounded-[3rem] overflow-hidden shadow-2xl relative">
         <div className="absolute top-8 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full z-20 flex items-center justify-center border border-white/10">
           <div className="w-1.5 h-1.5 bg-zinc-800 rounded-full mr-2"></div>
@@ -123,7 +120,6 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
         </div>
       </div>
 
-      {/* Editor Controls (SaaS Panel Style) */}
       <div className="flex-1 bg-zinc-900 border border-zinc-800 rounded-[3rem] overflow-hidden flex flex-col shadow-2xl">
         <div className="flex bg-zinc-950/50 p-2 border-b border-zinc-800">
            {['text', 'audio', 'style'].map(tab => (

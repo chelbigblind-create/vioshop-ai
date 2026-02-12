@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Product, VideoProject } from './types';
 import { StorageService } from './services/storage';
@@ -82,9 +81,8 @@ const App: React.FC = () => {
     }
 
     const checkApiKey = async () => {
-      // @ts-ignore
+      // Usando a definição global de index.tsx para acesso tipado seguro
       if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-        // @ts-ignore
         const hasKey = await window.aistudio.hasSelectedApiKey();
         setHasApiKey(hasKey);
       }
@@ -93,10 +91,9 @@ const App: React.FC = () => {
   }, [session]);
 
   const handleOpenKeyDialog = async () => {
-    // @ts-ignore
     if (window.aistudio && window.aistudio.openSelectKey) {
-      // @ts-ignore
       await window.aistudio.openSelectKey();
+      // Conforme as diretrizes, assumimos sucesso imediatamente para evitar condições de corrida ao trocar de chave
       setHasApiKey(true);
     }
   };
