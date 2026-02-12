@@ -11,7 +11,7 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
-  const [message, setMessage] = useState<{type: 'error' | 'success', text: string} | null>(null);
+  const [message, setMessage] = useState<{type: 'error' | 'success' | 'warning', text: string} | null>(null);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +31,6 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
           email, 
           password,
           options: {
-            // Isso ajuda se você desativar a confirmação no painel
             emailRedirectTo: window.location.origin 
           }
         });
@@ -43,7 +42,7 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
         } else {
           setMessage({ 
             type: 'success', 
-            text: 'Conta criada! Verifique seu e-mail para confirmar (ou tente entrar se você desativou a confirmação no painel).' 
+            text: 'Conta criada! Verifique sua caixa de entrada para confirmar o e-mail.' 
           });
         }
       } else {
@@ -54,19 +53,33 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
     } catch (error: any) {
       let errorText = error.message;
       
-      // Tradução de erros comuns do Supabase
-      if (errorText.includes('rate limit exceeded')) {
-        errorText = 'Limite de tentativas excedido. Vá no painel do Supabase > Auth > Providers > Email e desative "Confirm Email" para testar livremente.';
+      if (errorText.includes('Email not confirmed')) {
+        setMessage({ 
+          type: 'warning', 
+          text: 'E-mail não confirmado. Por favor, verifique seu e-mail ou desative a confirmação em: Supabase Dashboard > Auth > Providers > Email > "Confirm Email".' 
+        });
+      } else if (errorText.includes('rate limit exceeded')) {
+        setMessage({ type: 'error', text: 'Muitas tentativas. Tente novamente em alguns minutos.' });
       } else if (errorText.includes('Invalid login credentials')) {
-        errorText = 'E-mail ou senha incorretos.';
-      } else if (errorText.includes('User already registered')) {
-        errorText = 'Este e-mail já está cadastrado.';
+        setMessage({ type: 'error', text: 'E-mail ou senha incorretos.' });
+      } else {
+        setMessage({ type: 'error', text: errorText });
       }
-      
-      setMessage({ type: 'error', text: errorText });
     } finally {
       setLoading(false);
     }
+  };
+
+  // Permite entrar na plataforma para testar sem precisar de confirmação de e-mail real
+  const handleDemoMode = () => {
+    const mockSession = {
+      user: {
+        email: 'demo@vioshop.ai',
+        id: 'demo-user-123'
+      },
+      access_token: 'demo-token'
+    };
+    onSession(mockSession);
   };
 
   return (
@@ -108,7 +121,11 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
         </div>
 
         {message && (
-          <div className={`p-4 rounded-xl text-xs font-bold border leading-relaxed ${message.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
+          <div className={`p-4 rounded-xl text-xs font-bold border leading-relaxed ${
+            message.type === 'error' ? 'bg-red-500/10 border-red-500/20 text-red-400' : 
+            message.type === 'warning' ? 'bg-amber-500/10 border-amber-500/20 text-amber-400' :
+            'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
+          }`}>
             {message.text}
           </div>
         )}
@@ -122,7 +139,7 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
         </button>
       </form>
 
-      <div className="mt-8 text-center">
+      <div className="mt-6 flex flex-col gap-4 items-center">
         <button 
           onClick={() => {
             setIsSignUp(!isSignUp);
@@ -131,6 +148,19 @@ const Auth: React.FC<AuthProps> = ({ onSession }) => {
           className="text-[10px] font-black text-zinc-500 uppercase tracking-widest hover:text-pink-500 transition-colors"
         >
           {isSignUp ? 'Já tem uma conta? Entre aqui' : 'Não tem conta? Crie uma agora'}
+        </button>
+
+        <div className="w-full flex items-center gap-4 py-2">
+          <div className="flex-1 h-px bg-zinc-800"></div>
+          <span className="text-[8px] font-black text-zinc-700 uppercase tracking-[0.5em]">OU</span>
+          <div className="flex-1 h-px bg-zinc-800"></div>
+        </div>
+
+        <button 
+          onClick={handleDemoMode}
+          className="w-full py-4 border border-zinc-800 text-zinc-400 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-white hover:text-black transition-all"
+        >
+          Explorar em Modo Demo (Sem Login)
         </button>
       </div>
     </div>
