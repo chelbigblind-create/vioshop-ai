@@ -20,6 +20,7 @@ import TermsOfService from './components/TermsOfService';
 const App: React.FC = () => {
   const [session, setSession] = useState<any>(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  const [initProgress, setInitProgress] = useState(0);
   const [showAuth, setShowAuth] = useState(false);
   const [currentView, setCurrentView] = useState<View>(View.LANDING);
   const [savedProducts, setSavedProducts] = useState<Product[]>([]);
@@ -31,16 +32,26 @@ const App: React.FC = () => {
   // Monitorar Sessão Supabase
   useEffect(() => {
     const supabase = getSupabaseClient();
+    
+    // Simulação de progresso de inicialização para feedback visual de que mudou!
+    const timer = setInterval(() => {
+      setInitProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          return 100;
+        }
+        return prev + 10;
+      });
+    }, 150);
+
     if (supabase) {
-      // 1. Verificar sessão inicial
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
-        setIsInitializing(false);
+        setTimeout(() => setIsInitializing(false), 2000);
       }).catch(() => {
-        setIsInitializing(false);
+        setTimeout(() => setIsInitializing(false), 2000);
       });
 
-      // 2. Escutar mudanças (Login/Logout)
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         setSession(session);
         if (!session) {
@@ -49,13 +60,15 @@ const App: React.FC = () => {
         }
       });
 
-      return () => subscription.unsubscribe();
+      return () => {
+        subscription.unsubscribe();
+        clearInterval(timer);
+      };
     } else {
-      setIsInitializing(false);
+      setTimeout(() => setIsInitializing(false), 2000);
     }
   }, []);
 
-  // Carregar dados quando a sessão mudar
   useEffect(() => {
     const loadInitialData = async () => {
       const products = await StorageService.getSavedProducts();
@@ -131,14 +144,19 @@ const App: React.FC = () => {
     }
   };
 
-  // TELA DE CARREGAMENTO INICIAL (Prova de atualização)
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center gap-4">
-        <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-2xl flex items-center justify-center animate-bounce shadow-2xl shadow-pink-500/20">
-          <i className="fas fa-bolt text-white text-2xl"></i>
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-10">
+        <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-indigo-600 rounded-3xl flex items-center justify-center mb-10 shadow-[0_0_50px_rgba(236,72,153,0.3)] animate-pulse">
+          <i className="fas fa-bolt text-white text-4xl"></i>
         </div>
-        <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] animate-pulse">Iniciando VioShop AI...</p>
+        <div className="w-full max-w-xs space-y-4 text-center">
+           <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] mb-2">VioShop Engine v2.5</p>
+           <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
+              <div className="h-full bg-pink-500 transition-all duration-300" style={{ width: `${initProgress}%` }}></div>
+           </div>
+           <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Estabelecendo conexão segura...</p>
+        </div>
       </div>
     );
   }
@@ -146,7 +164,6 @@ const App: React.FC = () => {
   if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.LANDING)} />;
   if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.LANDING)} />;
 
-  // Se estiver na Landing Page e NÃO clicou em Entrar
   if (currentView === View.LANDING && !showAuth) {
     return (
       <LandingPage 
@@ -159,7 +176,6 @@ const App: React.FC = () => {
     );
   }
 
-  // Se clicou em Entrar mas NÃO está logado
   if (showAuth && !session) {
     return (
       <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-zinc-950 to-zinc-950">
@@ -171,7 +187,6 @@ const App: React.FC = () => {
     );
   }
 
-  // PROTEÇÃO FINAL: Se por qualquer motivo não houver sessão, volta pra Landing
   if (!session) {
     return (
       <LandingPage 
@@ -183,9 +198,8 @@ const App: React.FC = () => {
     );
   }
 
-  // APP LOGADO
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-zinc-100 selection:bg-pink-500/30">
+    <div className="flex min-h-screen bg-black text-zinc-100 selection:bg-pink-500/30">
       <Sidebar 
         currentView={currentView} 
         setCurrentView={setCurrentView} 
@@ -195,8 +209,8 @@ const App: React.FC = () => {
         onLogout={handleLogout}
       />
       
-      <main className="flex-1 overflow-y-auto pb-24 lg:pb-0">
-        <div className="max-w-7xl mx-auto p-4 md:p-10">
+      <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scroll-smooth">
+        <div className="max-w-7xl mx-auto p-4 md:p-12">
           {currentView === View.DASHBOARD && (
             <Dashboard 
               onNewVideo={() => setCurrentView(View.PRODUCT_DISCOVERY)} 
