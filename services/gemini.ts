@@ -2,8 +2,16 @@
 import { GoogleGenAI } from "@google/genai";
 import { Product } from "../types";
 
+const getAI = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error("API_KEY não configurada no ambiente.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
+
 export const generateBusinessDescription = async (language: 'pt' | 'en'): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  const ai = getAI();
   const prompt = language === 'en' 
     ? "Write a professional business description (max 300 chars) for a TikTok Shop Affiliate Partner agency that uses AI to create high-converting product videos. Focus on scalability, technology, and performance."
     : "Escreva uma descrição profissional (máx 300 caracteres) para uma agência parceira de afiliados do TikTok Shop que usa IA para criar vídeos de alta conversão. Foque em escala, tecnologia e performance.";
@@ -16,7 +24,7 @@ export const generateBusinessDescription = async (language: 'pt' | 'en'): Promis
 };
 
 export const generateScript = async (product: Product): Promise<string> => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: 'gemini-3-flash-preview',
     contents: `Crie um roteiro de vendas curto (máximo 60 segundos) para o produto "${product.name}" na categoria "${product.category}". 
@@ -33,7 +41,7 @@ export const generateScript = async (product: Product): Promise<string> => {
 };
 
 export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' | '16:9' = '9:16') => {
-  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+  const ai = getAI();
   
   let operation = await ai.models.generateVideos({
     model: 'veo-3.1-fast-generate-preview',
