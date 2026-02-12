@@ -12,7 +12,7 @@ declare global {
   }
 
   interface Window {
-    // Removido o modificador 'readonly' para evitar conflito com a declaração nativa do ambiente.
+    // Removed 'readonly' modifier to match ambient declarations and avoid "identical modifiers" error.
     aistudio: AIStudio;
   }
 }
