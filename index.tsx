@@ -12,8 +12,8 @@ declare global {
   }
 
   interface Window {
-    // Fixed: Removed 'readonly' modifier to ensure property declarations match ambient environment definitions.
-    aistudio: AIStudio;
+    // Restored 'readonly' modifier to ensure property declarations match ambient environment definitions and fix the "identical modifiers" error.
+    readonly aistudio: AIStudio;
   }
 }
 

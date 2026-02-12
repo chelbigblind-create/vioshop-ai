@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { VideoProject } from '../types';
 import { generateVideoWithVeo } from '../services/gemini';
@@ -43,8 +42,10 @@ const Editor: React.FC<EditorProps> = ({ project, onBack }) => {
       console.error("Video generation failed", e);
       const errorMessage = e.message || "";
       
+      // If the request fails with an error message containing "Requested entity was not found.", reset the key selection state and prompt the user to select a key again via openSelectKey().
+      // A link to the billing documentation (ai.google.dev/gemini-api/docs/billing) must be provided.
       if (errorMessage.includes("Requested entity was not found") || errorMessage.includes("404")) {
-        setError("PROJETO NÃO CONFIGURADO: O modelo Veo 3.1 exige uma chave de API de um projeto Google Cloud com faturamento ativo.");
+        setError("PROJETO NÃO CONFIGURADO: O modelo Veo 3.1 exige uma chave de API de um projeto Google Cloud com faturamento ativo. Verifique em: ai.google.dev/gemini-api/docs/billing");
         if (window.aistudio && typeof window.aistudio.openSelectKey === 'function') {
            await window.aistudio.openSelectKey();
            generate(); 

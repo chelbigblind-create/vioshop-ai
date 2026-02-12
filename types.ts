@@ -7,17 +7,27 @@ export enum View {
   EDITOR = 'EDITOR',
   HISTORY = 'HISTORY',
   BRANDING = 'BRANDING',
-  SETTINGS = 'SETTINGS', // Nova view para configurar API real
+  SETTINGS = 'SETTINGS',
   PRIVACY_POLICY = 'PRIVACY_POLICY',
   TERMS_OF_SERVICE = 'TERMS_OF_SERVICE',
   LANDING = 'LANDING'
 }
 
+export interface TikTokPermissions {
+  marketing: boolean;
+  engagement: boolean;
+  catalog: boolean;
+  affiliate: 'approved' | 'pending' | 'none';
+  connectors: boolean;
+}
+
 export interface ApiConfig {
   appKey: string;
   appSecret: string;
+  partnerId: string;
   region: string;
   shopId?: string;
+  permissions: TikTokPermissions;
 }
 
 export interface Product {

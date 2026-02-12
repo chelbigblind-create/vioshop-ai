@@ -30,7 +30,38 @@ const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-      {/* Top Header - Ultra Modern */}
+      {/* TikTok Status Banner - NOVO */}
+      <div className="p-1 bg-gradient-to-r from-emerald-500/20 via-zinc-900 to-emerald-500/20 rounded-[2rem] border border-emerald-500/20">
+        <div className="bg-[#080808] rounded-[1.9rem] px-8 py-4 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500">
+                <i className="fab fa-tiktok"></i>
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">Status do Catálogo TikTok Shop</p>
+                <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter">Sincronização Ativa • 4/5 Módulos Aprovados</p>
+              </div>
+           </div>
+           <div className="hidden md:flex items-center gap-6">
+              <div className="text-right">
+                <p className="text-[8px] font-black text-zinc-500 uppercase">Partner ID</p>
+                <p className="text-[9px] font-bold text-white">74944...27033</p>
+              </div>
+              <div className="w-px h-8 bg-zinc-800"></div>
+              <div className="flex -space-x-2">
+                 {[1,2,3,4].map(i => (
+                   <div key={i} className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-500/50 flex items-center justify-center text-[8px] text-emerald-500">
+                     <i className="fas fa-check"></i>
+                   </div>
+                 ))}
+                 <div className="w-6 h-6 rounded-full bg-amber-500/20 border border-amber-500/50 flex items-center justify-center text-[8px] text-amber-500 animate-pulse">
+                   <i className="fas fa-clock"></i>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-zinc-900 pb-10">
         <div>
           <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase leading-none">
@@ -75,16 +106,6 @@ const Dashboard: React.FC<DashboardProps> = ({
               <h3 className="text-xl font-black text-white uppercase italic tracking-widest">Conversão Automática</h3>
               <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest mt-1">Sincronizado com API TikTok Shop</p>
             </div>
-            <div className="flex gap-4">
-               <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-pink-500 rounded-full"></div>
-                  <span className="text-[9px] font-black text-zinc-500 uppercase">Orgânico</span>
-               </div>
-               <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                  <span className="text-[9px] font-black text-zinc-500 uppercase">Ads AI</span>
-               </div>
-            </div>
           </div>
           
           <div className="flex items-end justify-between h-56 gap-5 px-4">
@@ -103,7 +124,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           </div>
         </div>
 
-        {/* Live Feed / Activity */}
+        {/* Live Feed */}
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-zinc-900 border border-zinc-800 rounded-[3rem] p-10 h-full flex flex-col">
             <h3 className="text-lg font-black text-white uppercase italic tracking-widest mb-10 flex items-center justify-between">
@@ -126,14 +147,6 @@ const Dashboard: React.FC<DashboardProps> = ({
                   <p className="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Aguardando primeira transmissão...</p>
                 </div>
               )}
-            </div>
-            <div className="mt-10 pt-10 border-t border-zinc-800">
-               <div className="p-5 bg-black rounded-2xl border border-white/5">
-                  <p className="text-[9px] font-black text-zinc-500 uppercase tracking-widest mb-2">Cloud Usage</p>
-                  <div className="w-full h-1 bg-zinc-800 rounded-full overflow-hidden">
-                     <div className="w-1/3 h-full bg-pink-500"></div>
-                  </div>
-               </div>
             </div>
           </div>
         </div>
