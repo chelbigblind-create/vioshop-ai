@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { View, Product, VideoProject } from './types';
 import { StorageService } from './services/storage';
@@ -28,20 +29,19 @@ const App: React.FC = () => {
   const [activeProject, setActiveProject] = useState<VideoProject | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
 
-  // Monitorar Sessão Supabase
   useEffect(() => {
     const supabase = getSupabaseClient();
     
-    // Simulação de progresso de inicialização para feedback visual de que mudou!
+    // Simulação de verificação de licença premium
     const timer = setInterval(() => {
       setInitProgress(prev => {
         if (prev >= 100) {
           clearInterval(timer);
           return 100;
         }
-        return prev + 10;
+        return prev + 5;
       });
-    }, 150);
+    }, 80);
 
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
@@ -81,7 +81,6 @@ const App: React.FC = () => {
     }
 
     const checkApiKey = async () => {
-      // Usando a definição global de index.tsx para acesso tipado seguro
       if (window.aistudio && window.aistudio.hasSelectedApiKey) {
         const hasKey = await window.aistudio.hasSelectedApiKey();
         setHasApiKey(hasKey);
@@ -93,7 +92,6 @@ const App: React.FC = () => {
   const handleOpenKeyDialog = async () => {
     if (window.aistudio && window.aistudio.openSelectKey) {
       await window.aistudio.openSelectKey();
-      // Conforme as diretrizes, assumimos sucesso imediatamente para evitar condições de corrida ao trocar de chave
       setHasApiKey(true);
     }
   };
@@ -150,9 +148,9 @@ const App: React.FC = () => {
         <div className="w-full max-w-xs space-y-4 text-center">
            <p className="text-[10px] font-black text-white uppercase tracking-[0.5em] mb-2">VioShop Engine v2.5</p>
            <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
-              <div className="h-full bg-pink-500 transition-all duration-300" style={{ width: `${initProgress}%` }}></div>
+              <div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${initProgress}%` }}></div>
            </div>
-           <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Estabelecendo conexão segura...</p>
+           <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Verificando Licença de Assinante...</p>
         </div>
       </div>
     );
@@ -181,17 +179,6 @@ const App: React.FC = () => {
         </button>
         <Auth onSession={(s) => { setSession(s); setShowAuth(false); setCurrentView(View.DASHBOARD); }} />
       </div>
-    );
-  }
-
-  if (!session) {
-    return (
-      <LandingPage 
-        onStart={handleStartApp} 
-        onNavigate={setCurrentView} 
-        isLoggedIn={false} 
-        onLogout={handleLogout}
-      />
     );
   }
 
