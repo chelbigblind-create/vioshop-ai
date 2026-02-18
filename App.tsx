@@ -32,10 +32,24 @@ const App: React.FC = () => {
   const [authStatus, setAuthStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    // Detectar retorno da autorização do TikTok
+    // Lógica de Roteamento por URL (Crucial para Aprovação TikTok GSO)
     const urlParams = new URLSearchParams(window.location.search);
+    const page = urlParams.get('page');
     const code = urlParams.get('code');
     
+    // 1. Se o link for direto para políticas (usado no cadastro do TikTok)
+    if (page === 'privacy') {
+      setCurrentView(View.PRIVACY_POLICY);
+      setIsInitializing(false);
+      return;
+    }
+    if (page === 'terms') {
+      setCurrentView(View.TERMS_OF_SERVICE);
+      setIsInitializing(false);
+      return;
+    }
+
+    // 2. Detectar retorno da autorização do TikTok
     if (code) {
       setAuthStatus('Finalizando conexão com TikTok Shop...');
       setCurrentView(View.SETTINGS);
@@ -43,7 +57,6 @@ const App: React.FC = () => {
       TikTokApiService.exchangeCodeForToken(code)
         .then(() => {
           setAuthStatus('Conectado com sucesso!');
-          // Limpa a URL para estética profissional
           window.history.replaceState({}, document.title, window.location.pathname);
           setTimeout(() => setAuthStatus(null), 5000);
         })
@@ -61,14 +74,15 @@ const App: React.FC = () => {
     if (supabase) {
       supabase.auth.getSession().then(({ data: { session } }) => {
         setSession(session);
-        setTimeout(() => setIsInitializing(false), 2000);
+        // Só muda a view se não houver um parâmetro de página legal forçado
+        if (!page) setTimeout(() => setIsInitializing(false), 2000);
       }).catch(() => {
-        setTimeout(() => setIsInitializing(false), 2000);
+        if (!page) setTimeout(() => setIsInitializing(false), 2000);
       });
 
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         setSession(session);
-        if (!session) {
+        if (!session && !page) {
           setCurrentView(View.LANDING);
           setShowAuth(false);
         }
@@ -79,7 +93,7 @@ const App: React.FC = () => {
         clearInterval(timer);
       };
     } else {
-      setTimeout(() => setIsInitializing(false), 2000);
+      if (!page) setTimeout(() => setIsInitializing(false), 2000);
     }
   }, []);
 
@@ -171,8 +185,20 @@ const App: React.FC = () => {
     );
   }
 
-  if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => setCurrentView(View.LANDING)} />;
-  if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => setCurrentView(View.LANDING)} />;
+  if (currentView === View.PRIVACY_POLICY) return <PrivacyPolicy onBack={() => {
+    // Se estiver em uma URL parametrizada, limpa a URL ao voltar
+    if (window.location.search.includes('page=privacy')) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    setCurrentView(session ? View.DASHBOARD : View.LANDING);
+  }} />;
+
+  if (currentView === View.TERMS_OF_SERVICE) return <TermsOfService onBack={() => {
+    if (window.location.search.includes('page=terms')) {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    setCurrentView(session ? View.DASHBOARD : View.LANDING);
+  }} />;
 
   if (currentView === View.LANDING && !showAuth) {
     return (
