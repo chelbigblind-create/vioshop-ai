@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 // Declaração para o TypeScript reconhecer as funções do ambiente do AI Studio.
-// O ambiente já define o tipo 'AIStudio', então estendemos e associamos corretamente para evitar conflitos de modificadores.
 declare global {
   interface AIStudio {
     hasSelectedApiKey: () => Promise<boolean>;
@@ -12,8 +11,8 @@ declare global {
   }
 
   interface Window {
-    // Restored 'readonly' modifier to ensure property declarations match ambient environment definitions and fix the "identical modifiers" error.
-    readonly aistudio: AIStudio;
+    // Fixed: Removed 'readonly' to ensure identical modifiers across all declarations of 'aistudio'.
+    aistudio: AIStudio;
   }
 }
 

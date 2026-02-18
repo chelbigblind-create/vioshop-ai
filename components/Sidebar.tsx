@@ -14,7 +14,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, hasApiKey, onActivateKey, user, onLogout }) => {
   const menuItems = [
     { id: View.DASHBOARD, label: 'Performance', icon: 'fas fa-chart-line' },
-    { id: View.PRODUCT_DISCOVERY, label: 'TikTok Catálogo', icon: 'fab fa-tiktok' },
+    { id: View.PRODUCT_DISCOVERY, label: 'Minerador Global', icon: 'fas fa-search-dollar' },
     { id: View.SAVED_PRODUCTS, label: 'Minha Biblioteca', icon: 'fas fa-folder' },
     { id: View.HISTORY, label: 'Galeria Viral', icon: 'fas fa-play' },
     { id: View.BRANDING, label: 'Assets de Marca', icon: 'fas fa-fingerprint' },
@@ -52,18 +52,17 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, hasApiKe
         </nav>
 
         <div className="mt-auto space-y-8">
-          {/* Version & Sync Status */}
           <div className="p-5 rounded-2xl bg-zinc-900/30 border border-white/5 space-y-4">
              <div className="flex items-center justify-between">
-                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Estado do Deploy</span>
+                <span className="text-[8px] font-black text-zinc-600 uppercase tracking-widest">Network Status</span>
                 <div className="flex items-center gap-2">
                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
-                   <span className="text-[8px] font-black text-emerald-500 uppercase">Sincronizado</span>
+                   <span className="text-[8px] font-black text-emerald-500 uppercase">Live Global</span>
                 </div>
              </div>
              <div className="flex flex-col">
-                <span className="text-[8px] font-black text-zinc-600 uppercase mb-1">Conta Ativa</span>
-                <span className="text-[10px] font-bold text-white truncate">{user?.email || 'v2.5_Guest'}</span>
+                <span className="text-[8px] font-black text-zinc-600 uppercase mb-1">App ID Ativo</span>
+                <span className="text-[10px] font-bold text-white truncate">6j2c6seef6dre</span>
              </div>
           </div>
 
@@ -71,12 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView, hasApiKe
             onClick={onLogout}
             className="w-full py-4 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3"
           >
-            <i className="fas fa-power-off"></i> Sair do Sistema
+            <i className="fas fa-power-off"></i> Sair
           </button>
         </div>
       </aside>
 
-      {/* Mobile Nav */}
       <nav className="lg:hidden fixed bottom-6 left-6 right-6 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] px-8 py-5 flex justify-between items-center z-50 shadow-2xl">
         {menuItems.slice(0, 4).map((item) => (
           <button

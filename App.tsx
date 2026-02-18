@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Product, VideoProject } from './types';
 import { StorageService } from './services/storage';
 import { getSupabaseClient } from './services/supabase';
+import { TikTokApiService } from './services/tiktok';
 import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import ProductDiscovery from './components/ProductDiscovery';
@@ -28,19 +29,33 @@ const App: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [activeProject, setActiveProject] = useState<VideoProject | null>(null);
   const [hasApiKey, setHasApiKey] = useState(false);
+  const [authStatus, setAuthStatus] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = getSupabaseClient();
+    // Detectar retorno da autorização do TikTok
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
     
-    // Simulação de verificação de licença premium
+    if (code) {
+      setAuthStatus('Finalizando conexão com TikTok Shop...');
+      setCurrentView(View.SETTINGS);
+      
+      TikTokApiService.exchangeCodeForToken(code)
+        .then(() => {
+          setAuthStatus('Conectado com sucesso!');
+          // Limpa a URL para estética profissional
+          window.history.replaceState({}, document.title, window.location.pathname);
+          setTimeout(() => setAuthStatus(null), 5000);
+        })
+        .catch(err => {
+          setAuthStatus(`Erro: ${err.message}`);
+          setTimeout(() => setAuthStatus(null), 8000);
+        });
+    }
+
+    const supabase = getSupabaseClient();
     const timer = setInterval(() => {
-      setInitProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          return 100;
-        }
-        return prev + 5;
-      });
+      setInitProgress(prev => (prev >= 100 ? 100 : prev + 5));
     }, 80);
 
     if (supabase) {
@@ -150,7 +165,7 @@ const App: React.FC = () => {
            <div className="w-full h-1 bg-zinc-900 rounded-full overflow-hidden">
               <div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${initProgress}%` }}></div>
            </div>
-           <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Verificando Licença de Assinante...</p>
+           <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest animate-pulse">Sincronizando Módulos TikTok Shop...</p>
         </div>
       </div>
     );
@@ -194,6 +209,12 @@ const App: React.FC = () => {
       />
       
       <main className="flex-1 overflow-y-auto pb-24 lg:pb-0 scroll-smooth">
+        {authStatus && (
+          <div className="bg-indigo-600 text-white py-3 px-6 text-center text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-top duration-500 flex items-center justify-center gap-4">
+            <i className="fas fa-circle-notch animate-spin"></i>
+            {authStatus}
+          </div>
+        )}
         <div className="max-w-7xl mx-auto p-4 md:p-12">
           {currentView === View.DASHBOARD && (
             <Dashboard 

@@ -14,19 +14,26 @@ export enum View {
 }
 
 export interface TikTokPermissions {
-  marketing: boolean;
-  engagement: boolean;
-  catalog: boolean;
+  marketing: 'approved' | 'pending' | 'none';
+  engagement: 'approved' | 'pending' | 'none';
+  catalog: 'approved' | 'pending' | 'none';
   affiliate: 'approved' | 'pending' | 'none';
-  connectors: boolean;
+  connectors: 'approved' | 'pending' | 'none';
+  security_assessment: 'approved' | 'pending' | 'none';
 }
 
 export interface ApiConfig {
   appKey: string;
   appSecret: string;
   partnerId: string;
+  legalName: string; 
+  cnpj: string; // Adicionado para conformidade fiscal/GSO
   region: string;
-  shopId?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  tokenExpiry?: number;
+  sellerName?: string;
+  openId?: string;
   permissions: TikTokPermissions;
 }
 

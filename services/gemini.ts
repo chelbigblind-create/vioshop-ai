@@ -9,6 +9,7 @@ const getAIInstance = () => {
 // A função de busca foi removida pois agora os dados vêm DIRETAMENTE da API do TikTok no serviço tiktok.ts
 
 export const generateScript = async (product: Product): Promise<string> => {
+  // Fix: Create AI instance right before the generateContent API call
   const ai = getAIInstance();
   
   // O prompt agora recebe dados REAIS do catálogo injetados pelo serviço TikTokApiService
@@ -27,6 +28,7 @@ export const generateScript = async (product: Product): Promise<string> => {
 };
 
 export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' | '16:9' = '9:16') => {
+  // Fix: Create AI instance right before the generateVideos API call
   const ai = getAIInstance();
   let operation = await ai.models.generateVideos({
     model: 'veo-3.1-fast-generate-preview',
@@ -40,10 +42,13 @@ export const generateVideoWithVeo = async (prompt: string, aspectRatio: '9:16' |
 
   while (!operation.done) {
     await new Promise(resolve => setTimeout(resolve, 10000));
-    operation = await ai.operations.getVideosOperation({operation: operation});
+    // Fix: Create a fresh AI instance before polling to ensure the most up-to-date API key is used
+    const aiPoll = getAIInstance();
+    operation = await aiPoll.operations.getVideosOperation({operation: operation});
   }
 
   const downloadLink = operation.response?.generatedVideos?.[0]?.video?.uri;
+  // Fix: Ensure the current API key is used when fetching the video
   const videoResponse = await fetch(`${downloadLink}&key=${process.env.API_KEY}`);
   const blob = await videoResponse.blob();
   return URL.createObjectURL(blob);
