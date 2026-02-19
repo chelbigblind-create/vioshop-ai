@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -11,7 +10,7 @@ declare global {
   }
 
   interface Window {
-    // Restore 'readonly' to ensure identical modifiers across all declarations of 'aistudio' in the environment.
+    // Fix: Added 'readonly' back to ensure identical modifiers across all declarations of 'aistudio' in the environment.
     readonly aistudio: AIStudio;
   }
 }
